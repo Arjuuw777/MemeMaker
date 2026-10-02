@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MemeForge — Meme Maker</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #0f0f14;
+    --panel: #181820;
+    --panel2: #22222c;
+    --text: #ffffff;
+    --muted: #a7a7b3;
+    --accent: #8b5cf6;
+    --accent2: #ec4899;
+    --border: #343440;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(circle at top left, #29204a, transparent 35%),
+        radial-gradient(circle at bottom right, #3a1731, transparent 35%),
+        var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* ================= HEADER ================= */
+
+header {
+    padding: 22px 20px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(15,15,20,0.85);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: 900;
+}
+
+.logo span {
+    color: var(--accent);
+}
+
+.header-credit {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* ================= MAIN ================= */
+
+main {
+    max-width: 1200px;
+    margin: auto;
+    padding: 30px 18px 60px;
+}
+
+.hero {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.hero h1 {
+    font-size: clamp(32px, 6vw, 58px);
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.hero h1 span {
+    background: linear-gradient(90deg, #8b5cf6, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero p {
+    color: var(--muted);
+    font-size: 16px;
+}
+
+/* ================= EDITOR ================= */
+
+.editor {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 22px;
+    align-items: start;
+}
+
+.panel {
+    background: rgba(24,24,32,0.94);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.panel h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+/* ================= TEMPLATE LIST ================= */
+
+.template-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    max-height: 390px;
+    overflow-y: auto;
+    padding-right: 3px;
+}
+
+.template {
+    border: 2px solid transparent;
+    background: var(--panel2);
+    border-radius: 12px;
+    overflow: hidden;
+    color: white;
+    transition: 0.2s;
+}
+
+.template:hover {
+    transform: translateY(-2px);
+    border-color: #666;
+}
+
+.template.active {
+    border-color: var(--accent);
+}
+
+.template img {
+    width: 100%;
+    height: 105px;
+    object-fit: cover;
+    display: block;
+}
+
+.template-name {
+    padding: 8px;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* ================= CONTROLS ================= */
+
+.control {
+    margin-top: 18px;
+}
+
+.control label {
+    display: block;
+    margin-bottom: 7px;
+    color: #ddd;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.text-input,
+select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #101016;
+    color: white;
+    outline: none;
+}
+
+.text-input:focus,
+select:focus {
+    border-color: var(--accent);
+}
+
+.range-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+}
+
+.range-value {
+    min-width: 38px;
+    text-align: right;
+    color: var(--muted);
+}
+
+.color-row {
+    display: flex;
+    gap: 10px;
+}
+
+.color-box {
+    flex: 1;
+}
+
+input[type="color"] {
+    width: 100%;
+    height: 42px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: transparent;
+    padding: 3px;
+}
+
+/* ================= EMOJIS ================= */
+
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.emoji-btn {
+    border: 1px solid var(--border);
+    background: var(--panel2);
+    border-radius: 8px;
+    padding: 7px;
+    font-size: 20px;
+}
+
+.emoji-btn:hover {
+    background: #333340;
+}
+
+/* ================= BUTTONS ================= */
+
+.button-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn {
+    border: none;
+    border-radius: 11px;
+    padding: 12px 16px;
+    color: white;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.primary {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+
+.secondary {
+    background: #30303b;
+}
+
+.danger {
+    background: #b42338;
+}
+
+.full {
+    width: 100%;
+}
+
+/* ================= CANVAS AREA ================= */
+
+.preview-panel {
+    min-width: 0;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.preview-header h2 {
+    margin: 0;
+}
+
+.canvas-wrap {
+    width: 100%;
+    background:
+        linear-gradient(45deg, #25252d 25%, transparent 25%),
+        linear-gradient(-45deg, #25252d 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #25252d 75%),
+        linear-gradient(-45deg, transparent 75%, #25252d 75%);
+    background-size: 25px 25px;
+    background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px;
+}
+
+.canvas-container {
+    position: relative;
+    max-width: 700px;
+    width: 100%;
+    line-height: 0;
+    user-select: none;
+    touch-action: none;
+}
+
+#memeCanvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    background: #222;
+}
+
+/* ================= HINT ================= */
+
+.hint {
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+    margin-top: 12px;
+}
+
+/* ================= FOOTER ================= */
+
+footer {
+    text-align: center;
+    color: var(--muted);
+    padding: 25px;
+    font-size: 13px;
+}
+
+footer strong {
+    color: white;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 850px) {
+
+    .editor {
+        grid-template-columns: 1fr;
+    }
+
+    .preview-panel {
+        order: -1;
+    }
+
+    .canvas-wrap {
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 500px) {
+
+    main {
+        padding: 20px 12px 40px;
+    }
+
+    .panel {
+        padding: 15px;
+    }
+
+    .template-grid {
+        max-height: 300px;
+    }
+
+    .template img {
+        height: 85px;
+    }
+
+    .button-row {
+        flex-direction: column;
+    }
+
+    .emoji-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .canvas-wrap {
+        padding: 8px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-inner">
+
+        <div class="logo">
+            😂 Meme<span>Forge</span>
+        </div>
+
+        <div class="header-credit">
+            Made by Arjuuw
+        </div>
+
+    </div>
+</header>
+
+
+<main>
+
+    <section class="hero">
+
+        <h1>Create <span>Memes.</span></h1>
+
+        <p>
+            Pick a template. Add text. Make it yours.
+        </p>
+
+    </section>
+
+
+    <section class="editor">
+
+
+        <!-- ================= LEFT PANEL ================= -->
+
+        <aside class="panel">
+
+            <h2>🖼️ Templates</h2>
+
+            <div
+                class="template-grid"
+                id="templateGrid">
+            </div>
+
+
+            <!-- TOP TEXT -->
+
+            <div class="control">
+
+                <label for="topText">
+                    Top Text
+                </label>
+
+                <input
+                    class="text-input"
+                    id="topText"
+                    type="text"
+                    maxlength="100"
+                    placeholder="TOP TEXT"
+                >
+
+            </div>
+
+
+            <!-- BOTTOM TEXT -->
+
+            <div class="control">
+
+                <label for="bottomText">
+                    Bottom Text
+                </label>
+
+                <input
+                    class="text-input"
+                    id="bottomText"
+                    type="text"
+                    maxlength="100"
+                    placeholder="BOTTOM TEXT"
+                >
+
+            </div>
+
+
+            <!-- FONT -->
+
+            <div class="control">
+
+                <label for="fontFamily">
+                    Font
+                </label>
+
+                <select id="fontFamily">
+
+                    <option value="Impact">
+                        Impact
+                    </option>
+
+                    <option value="Arial Black">
+                        Arial Black
+                    </option>
+
+                    <option value="Arial">
+                        Arial
+                    </option>
+
+                    <option value="Verdana">
+                        Verdana
+                    </option>
+
+                    <option value="Comic Sans MS">
+                        Comic Sans
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- FONT SIZE -->
+
+            <div class="control">
+
+                <label>
+                    Text Size
+                </label>
+
+                <div class="range-row">
+
+                    <input
+                        type="range"
+                        id="fontSize"
+                        min="18"
+                        max="100"
+                        value="48"
+                    >
+
+                    <span
+                        class="range-value"
+                        id="fontSizeValue">
+                        48
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- COLORS -->
+
+            <div class="control">
+
+                <label>
+                    Text Colors
+                </label>
+
+                <div class="color-row">
+
+                    <div class="color-box">
+
+                        <small>Text</small>
+
+                        <input
+                            type="color"
+                            id="textColor"
+                            value="#ffffff"
+                        >
+
+                    </div>
+
+                    <div class="color-box">
+
+                        <small>Outline</small>
+
+                        <input
+                            type="color"
+                            id="outlineColor"
+                            value="#000000"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- OUTLINE -->
+
+            <div class="control">
+
+                <label>
+                    Outline
+                </label>
+
+                <div class="range-row">
+
+                    <input
+                        type="range"
+                        id="outlineSize"
+                        min="0"
+                        max="15"
+                        value="5"
+                    >
+
+                    <span
+                        class="range-value"
+                        id="outlineValue">
+                        5
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- EMOJIS -->
+
+            <div class="control">
+
+                <label>
+                    Add Emoji
+                </label>
+
+                <div
+                    class="emoji-grid"
+                    id="emojiGrid">
+
+                </div>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="button-row">
+
+                <button
+                    class="btn secondary full"
+                    id="randomButton"
+                    type="button">
+
+                    🎲 Random
+
+                </button>
+
+                <button
+                    class="btn danger full"
+                    id="clearButton"
+                    type="button">
+
+                    🗑️ Clear
+
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ================= PREVIEW ================= -->
+
+        <section class="panel preview-panel">
+
+            <div class="preview-header">
+
+                <h2>👁️ Preview</h2>
+
+                <button
+                    class="btn primary"
+                    id="downloadButton"
+                    type="button">
+
+                    ⬇️ Download PNG
+
+                </button>
+
+            </div>
+
+
+            <div class="canvas-wrap">
+
+                <div class="canvas-container">
+
+                    <canvas
+                        id="memeCanvas">
+                    </canvas>
+
+                </div>
+
+            </div>
+
+            <p class="hint">
+                Drag the text or emoji directly on the meme to move it.
+            </p>
+
+        </section>
+
+    </section>
+
+</main>
+
+
+<footer>
+    MemeForge © 2026 · Created with ❤️ by <strong>Arjuuw</strong>
+</footer>
+
+
+<script>
+
+/* =====================================================
+   MEMEFORGE
+===================================================== */
+
+
+/* ================= TEMPLATES ================= */
+
+const templates = [
+
+    {
+        name: "Drake",
+        image: "https://i.imgflip.com/30b1gx.jpg"
+    },
+
+    {
+        name: "Distracted Boyfriend",
+        image: "https://i.imgflip.com/1ur9b0.jpg"
+    },
+
+    {
+        name: "Two Buttons",
+        image: "https://i.imgflip.com/1g8my4.jpg"
+    },
+
+    {
+        name: "Change My Mind",
+        image: "https://i.imgflip.com/24y43o.jpg"
+    },
+
+    {
+        name: "One Does Not Simply",
+        image: "https://i.imgflip.com/1bij.jpg"
+    },
+
+    {
+        name: "Batman Slap",
+        image: "https://i.imgflip.com/9ehk.jpg"
+    },
+
+    {
+        name: "Expanding Brain",
+        image: "https://i.imgflip.com/1jwhww.jpg"
+    },
+
+    {
+        name: "Mocking SpongeBob",
+        image: "https://i.imgflip.com/1otk96.jpg"
+    },
+
+    {
+        name: "Running Away Balloon",
+        image: "https://i.imgflip.com/1o00in.jpg"
+    },
+
+    {
+        name: "Waiting Skeleton",
+        image: "https://i.imgflip.com/2fm6x.jpg"
+    }
+
+];
+
+
+/* ================= EMOJIS ================= */
+
+const emojis = [
+    "😂",
+    "😭",
+    "💀",
+    "🤣",
+    "😎",
+    "🤡",
+    "🔥",
+    "❤️",
+    "💔",
+    "😳",
+    "😈",
+    "🤔",
+    "🗿",
+    "👀",
+    "💯",
+    "🙏",
+    "🥶",
+    "🤯"
+];
+
+
+/* ================= ELEMENTS ================= */
+
+const canvas =
+    document.getElementById("memeCanvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+const templateGrid =
+    document.getElementById("templateGrid");
+
+const topText =
+    document.getElementById("topText");
+
+const bottomText =
+    document.getElementById("bottomText");
+
+const fontFamily =
+    document.getElementById("fontFamily");
+
+const fontSize =
+    document.getElementById("fontSize");
+
+const fontSizeValue =
+    document.getElementById("fontSizeValue");
+
+const textColor =
+    document.getElementById("textColor");
+
+const outlineColor =
+    document.getElementById("outlineColor");
+
+const outlineSize =
+    document.getElementById("outlineSize");
+
+const outlineValue =
+    document.getElementById("outlineValue");
+
+const emojiGrid =
+    document.getElementById("emojiGrid");
+
+const randomButton =
+    document.getElementById("randomButton");
+
+const clearButton =
+    document.getElementById("clearButton");
+
+const downloadButton =
+    document.getElementById("downloadButton");
+
+
+/* ================= STATE ================= */
+
+let currentTemplate = 0;
+
+let image = new Image();
+
+let imageLoaded = false;
+
+let objects = [];
+
+
+/* ================= LOAD TEMPLATES ================= */
+
+templates.forEach((template, index) => {
+
+    const button =
+        document.createElement("button");
+
+    button.type = "button";
+
+    button.className = "template";
+
+    if (index === 0) {
+        button.classList.add("active");
+    }
+
+    button.innerHTML = `
+        <img
+            src="${template.image}"
+            alt="${template.name}"
+            loading="lazy"
+        >
+        <div class="template-name">
+            ${template.name}
+        </div>
+    `;
+
+    button.addEventListener("click", () => {
+
+        selectTemplate(index);
+
+    });
+
+    templateGrid.appendChild(button);
+
+});
+
+
+/* ================= EMOJI BUTTONS ================= */
+
+emojis.forEach(emoji => {
+
+    const button =
+        document.createElement("button");
+
+    button.type = "button";
+
+    button.className = "emoji-btn";
+
+    button.textContent = emoji;
+
+    button.addEventListener("click", () => {
+
+        addEmoji(emoji);
+
+    });
+
+    emojiGrid.appendChild(button);
+
+});
+
+
+/* ================= TEMPLATE SELECT ================= */
+
+function selectTemplate(index) {
+
+    currentTemplate = index;
+
+    document
+        .querySelectorAll(".template")
+        .forEach((button, i) => {
+
+            button.classList.toggle(
+                "active",
+                i === index
+            );
+
+        });
+
+    imageLoaded = false;
+
+    image = new Image();
+
+    image.crossOrigin = "anonymous";
+
+    image.onload = () => {
+
+        imageLoaded = true;
+
+        setupCanvas();
+
+        draw();
+
+    };
+
+    image.onerror = () => {
+
+        drawPlaceholder();
+
+    };
+
+    image.src =
+        templates[index].image;
+
+}
+
+
+/* ================= CANVAS ================= */
+
+function setupCanvas() {
+
+    if (!imageLoaded) return;
+
+    const maxWidth = 900;
+
+    const scale =
+        Math.min(
+            1,
+            maxWidth / image.naturalWidth
+        );
+
+    canvas.width =
+        Math.round(
+            image.naturalWidth * scale
+        );
+
+    canvas.height =
+        Math.round(
+            image.naturalHeight * scale
+        );
+
+}
+
+
+function drawPlaceholder() {
+
+    canvas.width = 700;
+
+    canvas.height = 450;
+
+    ctx.fillStyle = "#222";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.fillStyle = "#fff";
+
+    ctx.font = "bold 28px Arial";
+
+    ctx.textAlign = "center";
+
+    ctx.fillText(
+        "Template could not be loaded",
+        canvas.width / 2,
+        canvas.height / 2
+    );
+
+}
+
+
+/* ================= DRAW ================= */
+
+function draw() {
+
+    if (!imageLoaded) return;
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.drawImage(
+        image,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    const size =
+        Number(fontSize.value);
+
+    const outline =
+        Number(outlineSize.value);
+
+    ctx.textAlign = "center";
+
+    ctx.textBaseline = "middle";
+
+    ctx.font =
+        `bold ${size}px "${fontFamily.value}"`;
+
+
+    /* Default positions */
+
+    const topX =
+        canvas.width / 2;
+
+    const topY =
+        size * 0.9;
+
+    const bottomX =
+        canvas.width / 2;
+
+    const bottomY =
+        canvas.height - size * 0.9;
+
+
+    /* TOP TEXT */
+
+    if (topText.value.trim()) {
+
+        drawText(
+            topText.value.toUpperCase(),
+            topX,
+            topY,
+            size,
+            outline
+        );
+
+    }
+
+
+    /* BOTTOM TEXT */
+
+    if (bottomText.value.trim()) {
+
+        drawText(
+            bottomText.value.toUpperCase(),
+            bottomX,
+            bottomY,
+            size,
+            outline
+        );
+
+    }
+
+
+    /* CUSTOM OBJECTS */
+
+    objects.forEach(object => {
+
+        if (object.type === "emoji") {
+
+            ctx.font =
+                `${object.size}px Arial`;
+
+            ctx.fillText(
+                object.value,
+                object.x,
+                object.y
+            );
+
+        }
+
+    });
+
+}
+
+
+/* ================= DRAW TEXT ================= */
+
+function drawText(
+    text,
+    x,
+    y,
+    size,
+    outline
+) {
+
+    ctx.font =
+        `bold ${size}px "${fontFamily.value}"`;
+
+    ctx.lineWidth =
+        outline;
+
+    ctx.strokeStyle =
+        outlineColor.value;
+
+    ctx.fillStyle =
+        textColor.value;
+
+    ctx.strokeText(
+        text,
+        x,
+        y
+    );
+
+    ctx.fillText(
+        text,
+        x,
+        y
+    );
+
+}
+
+
+/* ================= ADD EMOJI ================= */
+
+function addEmoji(value) {
+
+    objects.push({
+
+        type: "emoji",
+
+        value: value,
+
+        x: canvas.width / 2,
+
+        y: canvas.height / 2,
+
+        size: 70
+
+    });
+
+    draw();
+
+}
+
+
+/* ================= CONTROLS ================= */
+
+topText.addEventListener(
+    "input",
+    draw
+);
+
+bottomText.addEventListener(
+    "input",
+    draw
+);
+
+fontFamily.addEventListener(
+    "change",
+    draw
+);
+
+textColor.addEventListener(
+    "input",
+    draw
+);
+
+outlineColor.addEventListener(
+    "input",
+    draw
+);
+
+fontSize.addEventListener(
+    "input",
+    () => {
+
+        fontSizeValue.textContent =
+            fontSize.value;
+
+        draw();
+
+    }
+);
+
+outlineSize.addEventListener(
+    "input",
+    () => {
+
+        outlineValue.textContent =
+            outlineSize.value;
+
+        draw();
+
+    }
+);
+
+
+/* ================= CLEAR ================= */
+
+clearButton.addEventListener(
+    "click",
+    () => {
+
+        topText.value = "";
+
+        bottomText.value = "";
+
+        objects = [];
+
+        draw();
+
+    }
+);
+
+
+/* ================= RANDOM ================= */
+
+randomButton.addEventListener(
+    "click",
+    () => {
+
+        const index =
+            Math.floor(
+                Math.random() *
+                templates.length
+            );
+
+        selectTemplate(index);
+
+    }
+);
+
+
+/* =====================================================
+   DRAGGING
+===================================================== */
+
+let dragging = null;
+
+let dragOffsetX = 0;
+
+let dragOffsetY = 0;
+
+
+function getCanvasPosition(event) {
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+    let clientX;
+    let clientY;
+
+    if (event.touches) {
+
+        clientX =
+            event.touches[0].clientX;
+
+        clientY =
+            event.touches[0].clientY;
+
+    } else {
+
+        clientX =
+            event.clientX;
+
+        clientY =
+            event.clientY;
+
+    }
+
+    return {
+
+        x:
+            (clientX - rect.left)
+            *
+            (canvas.width / rect.width),
+
+        y:
+            (clientY - rect.top)
+            *
+            (canvas.height / rect.height)
+
+    };
+
+}
+
+
+/* Find emoji under pointer */
+
+function findEmoji(x, y) {
+
+    for (
+        let i = objects.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        const object = objects[i];
+
+        if (object.type !== "emoji")
+            continue;
+
+        const distance =
+            Math.sqrt(
+                Math.pow(x - object.x, 2) +
+                Math.pow(y - object.y, 2)
+            );
+
+        if (
+            distance <
+            object.size / 1.5
+        ) {
+
+            return object;
+
+        }
+
+    }
+
+    return null;
+
+}
+
+
+/* Pointer down */
+
+canvas.addEventListener(
+    "pointerdown",
+    event => {
+
+        const position =
+            getCanvasPosition(event);
+
+        const emoji =
+            findEmoji(
+                position.x,
+                position.y
+            );
+
+        if (emoji) {
+
+            dragging = emoji;
+
+            dragOffsetX =
+                position.x - emoji.x;
+
+            dragOffsetY =
+                position.y - emoji.y;
+
+            canvas.setPointerCapture(
+                event.pointerId
+            );
+
+        }
+
+    }
+);
+
+
+/* Pointer move */
+
+canvas.addEventListener(
+    "pointermove",
+    event => {
+
+        if (!dragging) return;
+
+        const position =
+            getCanvasPosition(event);
+
+        dragging.x =
+            position.x - dragOffsetX;
+
+        dragging.y =
+            position.y - dragOffsetY;
+
+        draw();
+
+    }
+);
+
+
+/* Pointer up */
+
+canvas.addEventListener(
+    "pointerup",
+    () => {
+
+        dragging = null;
+
+    }
+);
+
+
+/* =====================================================
+   DOWNLOAD
+===================================================== */
+
+downloadButton.addEventListener(
+    "click",
+    () => {
+
+        if (!imageLoaded) {
+
+            alert(
+                "Please wait for the meme image to load."
+            );
+
+            return;
+
+        }
+
+        draw();
+
+        try {
+
+            const link =
+                document.createElement("a");
+
+            link.download =
+                "meme-by-arjuuw.png";
+
+            link.href =
+                canvas.toDataURL(
+                    "image/png"
+                );
+
+            link.click();
+
+        } catch (error) {
+
+            alert(
+                "This template cannot be downloaded directly because the image server blocks browser access. Try another template."
+            );
+
+        }
+
+    }
+);
+
+
+/* ================= START ================= */
+
+selectTemplate(0);
+
+</script>
+
+</body>
+</html>
